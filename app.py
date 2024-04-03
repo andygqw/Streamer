@@ -13,7 +13,7 @@ def video_feed():
 
 @app.route('/video/<filePath>')
 def video(filePath):
-    filePath = '/Volumes/Andys_SSD/content/movies/虽然是精神病但没关系/虽然是精神病但没关系_第2集.mp4'
+    filePath = 'static/video/虽然是精神病但没关系_第1集.mp4'
     return Response(stream_with_context(generate_video(filePath)), mimetype='video/mp4')
 
 def generate_video(video_path):
