@@ -12,6 +12,9 @@ venv/
 #videos
 static/video/
 
+#DS_Store
+.DS_Store
+
 # Distribution / packaging
 .Python
 build/
