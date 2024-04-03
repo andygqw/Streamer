@@ -10,11 +10,14 @@ def index():
 @app.route('/video/<filename>')
 def video(filename):
     def generate():
-        with open(f'static/videos/{filename}', 'rb') as video:
-            data = video.read(1024)
-            while data:
-                yield data
+        try:
+            with open(f'{filename}', 'rb') as video:
                 data = video.read(1024)
+                while data:
+                    yield data
+                    data = video.read(1024)
+        except FileNotFoundError:
+            return 'File not found'
 
     return Response(stream_with_context(generate()), mimetype='video/mp4')
 
