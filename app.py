@@ -1,12 +1,33 @@
-from flask import Flask, render_template, Response, stream_with_context, request
+from flask import Flask, render_template, Response, stream_with_context, request, send_from_directory, abort
+from werkzeug.utils import safe_join
 import re
 import os
 
 app = Flask(__name__)
 
+
+BASE_FOLDER = '/Volumes/Andys_SSD'
+
 @app.route('/')
-def index():
-    return render_template('index.html')
+@app.route('/browse/')
+@app.route('/browse/<path:subpath>')
+def browse(subpath=''):
+    full_path = safe_join(BASE_FOLDER, subpath)
+    if not os.path.exists(full_path):
+        print('Can\'t find folder: ' + full_path)
+        abort(404)
+
+    if os.path.isdir(full_path):
+        items = {'folders': [], 'files': []}
+        for item in os.listdir(full_path):
+            if os.path.isdir(os.path.join(full_path, item)):
+                items['folders'].append(item)
+            else:
+                items['files'].append(item)
+        return render_template('index.html', items=items, path=subpath)
+    else:
+        return send_from_directory(os.path.dirname(full_path), os.path.basename(full_path))
+
 
 @app.route('/video')
 def video_feed():
@@ -14,7 +35,8 @@ def video_feed():
 
 @app.route('/video/<filePath>')
 def video(filePath):
-    filePath = 'static/video/虽然是精神病但没关系_第1集.mp4'
+
+    #filePath = '/Volumes/Andys_SSD/content/movies/虽然是精神病但没关系/虽然是精神病但没关系_第3集.mp4'
 
     range_header = request.headers.get('Range', None)
     if not range_header:  # Browser doesn't support range requests
@@ -59,8 +81,6 @@ def generate_video(video_path):
             if not data:
                 break
             yield data
-
-
 
 
 if __name__ == '__main__':

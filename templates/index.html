@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Browse Files</title>
+</head>
+<body>
+    <h1>File Browser</h1>
+    <ul>
+        {% for folder in items.folders %}
+            <li><a href="{{ url_for('browse', subpath=safe_join(path, folder)) }}">{{ folder }}/</a></li>
+        {% endfor %}
+        {% for file in items.files %}
+            <li><a href="{{ url_for('browse', subpath=safe_join(path, file)) }}">{{ file }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
