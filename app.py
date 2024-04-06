@@ -5,7 +5,7 @@ import os
 
 app = Flask(__name__)
 
-
+# Constants
 BASE_FOLDER = '/Volumes/Andys_SSD/'
 EXTENSIONS = {'.mp4', '.mov', '.jpg', '.jpeg', '.png', '.pdf'}
 

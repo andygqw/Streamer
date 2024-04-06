@@ -5,7 +5,7 @@
     <title>Browse Files</title>
 </head>
 <body>
-    <h1>{{ upper_folder }}</h1>
+    <h1>{{ path }}</h1>
     <ul>
         {% for folder in items.folders %}
             <li><a href="{{ url_for('browse', subpath=path + folder + '/') }}">{{ folder }}/</a></li>
