@@ -36,17 +36,16 @@ def browse(subpath=''):
 @app.route('/handle/<path:filePath>')
 def handle(filePath):
 
-    print('Check: ' + filePath)
-    return render_template('video.html')
+    if filePath.endswith('.mp4'):
+        return render_template('video.html', path = filePath)
 
-@app.route('/video')
-def video_feed():
-    return render_template('video.html')
+    return render_template('video.html', filePath)
+
 
 @app.route('/video/<path:filePath>')
 def video(filePath):
 
-    #filePath = '/Volumes/Andys_SSD/content/movies/虽然是精神病但没关系/虽然是精神病但没关系_第3集.mp4'
+    filePath = BASE_FOLDER + filePath
 
     range_header = request.headers.get('Range', None)
     if not range_header:  # Browser doesn't support range requests
