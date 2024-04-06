@@ -25,7 +25,8 @@ def browse(subpath=''):
             if os.path.isdir(os.path.join(full_path, item)):
                 items['folders'].append(item)
             else:
-                items['files'].append(item)
+                if item.endswith('.mp4') or item.endswith('.mov') or item.endswith('.jpg') or item.endswith('.jpeg') or item.endswith('.png')or item.endswith('.pdf'):
+                    items['files'].append(item)
         return render_template('index.html', items=items, path=subpath)
     else:
         return send_from_directory(os.path.dirname(full_path), os.path.basename(full_path))
