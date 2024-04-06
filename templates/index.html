@@ -8,10 +8,10 @@
     <h1>File Browser</h1>
     <ul>
         {% for folder in items.folders %}
-            <li><a href="{{ url_for('browse', subpath=safe_join(path, folder)) }}">{{ folder }}/</a></li>
+            <li><a href="{{ url_for('browse', subpath=folder) }}">{{ folder }}/</a></li>
         {% endfor %}
         {% for file in items.files %}
-            <li><a href="{{ url_for('browse', subpath=safe_join(path, file)) }}">{{ file }}</a></li>
+            <li><a href="{{ url_for('browse', subpath=file) }}">{{ file }}</a></li>
         {% endfor %}
     </ul>
 </body>
