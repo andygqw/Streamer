@@ -31,13 +31,19 @@ def browse(subpath=''):
         return render_template('index.html', items=items, path=subpath)
     else:
         return send_from_directory(os.path.dirname(full_path), os.path.basename(full_path))
+    
 
+@app.route('/handle/<path:filePath>')
+def handle(filePath):
+
+    print('Check: ' + filePath)
+    return render_template('video.html')
 
 @app.route('/video')
 def video_feed():
     return render_template('video.html')
 
-@app.route('/video/<filePath>')
+@app.route('/video/<path:filePath>')
 def video(filePath):
 
     #filePath = '/Volumes/Andys_SSD/content/movies/虽然是精神病但没关系/虽然是精神病但没关系_第3集.mp4'

@@ -11,7 +11,7 @@
             <li><a href="{{ url_for('browse', subpath=path + folder + '/') }}">{{ folder }}/</a></li>
         {% endfor %}
         {% for file in items.files %}
-            <li><a href="{{ url_for('browse', subpath=file) }}">{{ file }}</a></li>
+            <li><a href="{{ url_for('handle', filePath=path + file) }}">{{ file }}</a></li>
         {% endfor %}
     </ul>
 </body>
