@@ -2,11 +2,23 @@
 <html>
 <head>
     <title>Video Stream</title>
+    <style>
+        #videoPlayer {
+            width: 60vw; /* % of the viewport width */
+            height: auto; /* Maintain aspect ratio */
+        }
+    </style>
 </head>
 <body>
+
+    <h1>{{ fileName }}</h1>
+
     <video id="videoPlayer" controls>
         <source src="{{ url_for('video', filePath = path) }}" type="video/mp4">
         Your browser does not support the video tag.
     </video>
+
+    <script>
+    </script>
 </body>
 </html>

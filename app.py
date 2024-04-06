@@ -36,8 +36,10 @@ def browse(subpath=''):
 @app.route('/handle/<path:filePath>')
 def handle(filePath):
 
+    fileName = os.path.basename(filePath)
+
     if filePath.endswith('.mp4'):
-        return render_template('video.html', path = filePath)
+        return render_template('video.html', path = filePath, fileName = fileName)
 
     return render_template('video.html', filePath)
 
