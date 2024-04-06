@@ -41,12 +41,16 @@ def handle(filePath):
 
     fileName = os.path.basename(filePath)
 
-    if (fileName.endswith(ext) for ext in VIDEO_EXTENSIONS):
+    _, ext = os.path.splitext(fileName)
+
+    if ext in VIDEO_EXTENSIONS:
         return render_template('video.html', path = filePath, fileName = fileName)
+    elif ext in {'.pdf', '.PDF'}:
+        return render_template('pdf.html', path = filePath, fileName = fileName)
 
     return render_template('video.html', filePath, fileName)
 
-
+# Video manip
 @app.route('/video/<path:filePath>')
 def video(filePath):
 
@@ -101,6 +105,17 @@ def generate_video(video_path):
             if not data:
                 break
             yield data
+
+# PDF manip
+@app.route('/pdf/<path:filePath>')
+def stream_pdf(filePath):
+    return Response(generate_pdf(filePath),
+                    mimetype='application/pdf')
+
+def generate_pdf(filePath):
+    with open(filePath, 'rb') as pdf_file:
+        while chunk := pdf_file.read(4096):
+            yield chunk
 
 
 if __name__ == '__main__':
