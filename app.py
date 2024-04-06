@@ -6,13 +6,23 @@ import os
 app = Flask(__name__)
 
 
-BASE_FOLDER = '/Volumes/Andys_SSD'
+BASE_FOLDER = '/Volumes/Andys_SSD/'
 
 @app.route('/')
 @app.route('/browse/')
 @app.route('/browse/<path:subpath>')
 def browse(subpath=''):
+
     full_path = safe_join(BASE_FOLDER, subpath)
+
+    upper_folder = subpath
+
+    # if full_path != BASE_FOLDER:
+    #     upper_folder += '/' + os.path.basename(full_path)
+    print('sub: ' + subpath)
+    print('HI: ' + full_path)
+    print('Look: '+ upper_folder)
+
     if not os.path.exists(full_path):
         print('Can\'t find folder: ' + full_path)
         abort(404)
@@ -24,7 +34,7 @@ def browse(subpath=''):
                 items['folders'].append(item)
             else:
                 items['files'].append(item)
-        return render_template('index.html', items=items, path=subpath)
+        return render_template('index.html', items=items, path=subpath, upper_folder=upper_folder)
     else:
         return send_from_directory(os.path.dirname(full_path), os.path.basename(full_path))
 
