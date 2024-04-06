@@ -7,6 +7,7 @@ app = Flask(__name__)
 
 
 BASE_FOLDER = '/Volumes/Andys_SSD/'
+EXTENSIONS = {'.mp4', '.mov', '.jpg', '.jpeg', '.png', '.pdf'}
 
 @app.route('/')
 @app.route('/browse/')
@@ -25,7 +26,7 @@ def browse(subpath=''):
             if os.path.isdir(os.path.join(full_path, item)):
                 items['folders'].append(item)
             else:
-                if item.endswith('.mp4') or item.endswith('.mov') or item.endswith('.jpg') or item.endswith('.jpeg') or item.endswith('.png')or item.endswith('.pdf'):
+                if any(item.endswith(ext) for ext in EXTENSIONS):
                     items['files'].append(item)
         return render_template('index.html', items=items, path=subpath)
     else:
