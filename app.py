@@ -32,8 +32,6 @@ def browse(subpath=''):
                 if any(item.endswith(ext) for ext in EXTENSIONS):
                     items['files'].append(item)
         return render_template('index.html', items=items, path=subpath)
-    else:
-        return send_from_directory(os.path.dirname(full_path), os.path.basename(full_path))
     
 
 @app.route('/handle/<path:filePath>')
@@ -48,7 +46,6 @@ def handle(filePath):
     if ext in VIDEO_EXTENSIONS:
         return render_template('video.html', path = filePath, fileName = fileName)
     elif ext == '.pdf':
-       #return render_template('pdf.html', path = url_for('stream_pdf', filePath=filePath), fileName = fileName)
        return send_from_directory(os.path.dirname(os.path.join(BASE_FOLDER, filePath)), fileName, as_attachment=False)
 
     return render_template('video.html', filePath, fileName)
