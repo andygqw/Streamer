@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response, stream_with_context, request, send_from_directory, abort
+from flask import Flask, render_template, Response, stream_with_context, request, send_from_directory, abort, url_for
 from werkzeug.utils import safe_join
 import re
 import os
@@ -9,8 +9,8 @@ app = Flask(__name__)
 
 # Constants
 BASE_FOLDER = '/Volumes/Andys_SSD/'
-EXTENSIONS = {'.mp4', '.mov', '.MOV', '.jpg', '.JPG', '.jpeg', '.JPEG', '.png', '.PNG', '.pdf', '.PDF'}
-VIDEO_EXTENSIONS = {'.mp4', '.mov', '.MOV'}
+EXTENSIONS = {'.mp4', '.mov', '.jpg', '.jpeg', '.png', '.pdf'}
+VIDEO_EXTENSIONS = {'.mp4', '.mov'}
 
 @app.route('/')
 @app.route('/browse/')
@@ -43,10 +43,13 @@ def handle(filePath):
 
     _, ext = os.path.splitext(fileName)
 
+    ext = ext.lower()
+
     if ext in VIDEO_EXTENSIONS:
         return render_template('video.html', path = filePath, fileName = fileName)
-    elif ext in {'.pdf', '.PDF'}:
-        return render_template('pdf.html', path = filePath, fileName = fileName)
+    elif ext == '.pdf':
+       #return render_template('pdf.html', path = url_for('stream_pdf', filePath=filePath), fileName = fileName)
+       return send_from_directory(os.path.dirname(os.path.join(BASE_FOLDER, filePath)), fileName, as_attachment=False)
 
     return render_template('video.html', filePath, fileName)
 
@@ -97,7 +100,6 @@ def video(filePath):
 
     return rv
 
-
 def generate_video(video_path):
     with open(video_path, "rb") as video_file:
         while True:
@@ -105,17 +107,6 @@ def generate_video(video_path):
             if not data:
                 break
             yield data
-
-# PDF manip
-@app.route('/pdf/<path:filePath>')
-def stream_pdf(filePath):
-    return Response(generate_pdf(filePath),
-                    mimetype='application/pdf')
-
-def generate_pdf(filePath):
-    with open(filePath, 'rb') as pdf_file:
-        while chunk := pdf_file.read(4096):
-            yield chunk
 
 
 if __name__ == '__main__':
