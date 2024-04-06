@@ -2,12 +2,15 @@ from flask import Flask, render_template, Response, stream_with_context, request
 from werkzeug.utils import safe_join
 import re
 import os
+import mimetypes
+
 
 app = Flask(__name__)
 
 # Constants
 BASE_FOLDER = '/Volumes/Andys_SSD/'
-EXTENSIONS = {'.mp4', '.mov', '.jpg', '.jpeg', '.png', '.pdf'}
+EXTENSIONS = {'.mp4', '.mov', '.MOV', '.jpg', '.JPG', '.jpeg', '.JPEG', '.png', '.PNG', '.pdf', '.PDF'}
+VIDEO_EXTENSIONS = {'.mp4', '.mov', '.MOV'}
 
 @app.route('/')
 @app.route('/browse/')
@@ -38,23 +41,28 @@ def handle(filePath):
 
     fileName = os.path.basename(filePath)
 
-    if filePath.endswith('.mp4'):
+    if (fileName.endswith(ext) for ext in VIDEO_EXTENSIONS):
         return render_template('video.html', path = filePath, fileName = fileName)
 
-    return render_template('video.html', filePath)
+    return render_template('video.html', filePath, fileName)
 
 
 @app.route('/video/<path:filePath>')
 def video(filePath):
 
-    filePath = BASE_FOLDER + filePath
+    filePath = os.path.join(BASE_FOLDER, filePath)
+
+    # Guess MIME type based on file extension, default to 'video/mp4'
+    mime_type, _ = mimetypes.guess_type(os.path.basename(filePath))
+    if mime_type is None:
+        mime_type = 'video/mp4'  # Default MIME type
 
     range_header = request.headers.get('Range', None)
     if not range_header:  # Browser doesn't support range requests
         print('Browser doesn\'t support range requests')
-        return Response(stream_with_context(generate_video(filePath)), mimetype='video/mp4')
+        return Response(stream_with_context(generate_video(filePath)), mimetype=mime_type)
 
-    size = os.path.getsize(filePath)    
+    size = os.path.getsize(filePath)
     byte1, byte2 = 0, None
 
     # Extract the range values
@@ -76,14 +84,15 @@ def video(filePath):
         f.seek(byte1)
         data = f.read(length)
 
-    rv = Response(data, 
+    rv = Response(data,
                   206,  # 206 Partial Content
-                  mimetype='video/mp4',
+                  mimetype=mime_type,
                   direct_passthrough=True)
     rv.headers.add('Content-Range', 'bytes {0}-{1}/{2}'.format(byte1, byte1 + length - 1, size))
     rv.headers.add('Accept-Ranges', 'bytes')
 
     return rv
+
 
 def generate_video(video_path):
     with open(video_path, "rb") as video_file:
